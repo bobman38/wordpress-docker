@@ -1,0 +1,36 @@
+version: '3.1'
+
+services:
+
+  php:
+    image: wordpress
+    volumes:
+      - ./config/php.conf.ini:/usr/local/etc/php/conf.d/conf.ini
+      - ./wordpress:/var/www/html # Full wordpress project
+      #- ./plugin-name/trunk/:/var/www/html/wp-content/plugins/plugin-name # Plugin development
+      #- ./theme-name/trunk/:/var/www/html/wp-content/themes/theme-name # Theme development
+    restart: always
+    ports:
+      - 8000:80
+    environment:
+      WORDPRESS_DB_HOST: db
+      WORDPRESS_DB_NAME: db
+      WORDPRESS_DB_USER: user
+      WORDPRESS_DB_PASSWORD: pass
+
+      WEB_DOCUMENT_ROOT: /site/app/web
+      WP_HOME: http://localhost:8000
+      DB_HOST: db
+      DB_NAME: db
+      DB_USER: user
+      DB_PASSWORD: pass
+  db:
+    image: mariadb
+    volumes:
+       - ./wordpress.sql:/docker-entrypoint-initdb.d/load.sql
+    restart: always
+    environment:
+      MYSQL_DATABASE: db
+      MYSQL_USER: user
+      MYSQL_PASSWORD: pass
+      MYSQL_RANDOM_ROOT_PASSWORD: '1'
